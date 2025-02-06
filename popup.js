@@ -37,6 +37,18 @@ function isValidYouTubeUrl(url) {
   }
 }
 
+// Helper function to fetch video title
+async function fetchVideoTitle(videoId) {
+  try {
+    const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
+    const data = await response.json();
+    return data.title || 'Untitled Video';
+  } catch (error) {
+    console.error('Error fetching video title:', error);
+    return 'Untitled Video';
+  }
+}
+
 // Schedule new video
 document.getElementById('scheduleButton').addEventListener('click', async () => {
   const videoUrl = document.getElementById('videoUrl').value.trim();
@@ -61,12 +73,16 @@ document.getElementById('scheduleButton').addEventListener('click', async () => 
   try {
     const { scheduledVideos = [] } = await storage.get({ scheduledVideos: [] });
     const id = generateId();
+    const videoId = extractVideoId(videoUrl);
+    const videoTitle = await fetchVideoTitle(videoId);
+    
     const newSchedule = {
       id,
       videoUrl,
+      videoId,
+      videoTitle,
       scheduleTime,
       status: 'scheduled',
-      videoId: extractVideoId(videoUrl),
       createdAt: Date.now()
     };
 
@@ -109,7 +125,7 @@ async function renderScheduledList() {
       const date = new Date(item.scheduleTime);
       
       li.innerHTML = `
-        <div class="video-title">${item.videoUrl}</div>
+        <div class="video-title">${item.videoTitle || 'Untitled Video'}</div>
         <div class="schedule-time">Scheduled for: ${date.toLocaleString()}</div>
         <div class="actions">
           <button class="open" data-id="${item.id}">Open Video</button>
