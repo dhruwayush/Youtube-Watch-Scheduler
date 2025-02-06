@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Watch Scheduler</title>
+  <link rel="stylesheet" href="flatpickr.min.css">
+  <link rel="stylesheet" type="text/css" href="material_red.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 450px;
+      font-family: "YouTube Sans", Roboto, Arial, sans-serif;
+      background: #ffffff;
+      color: #0f0f0f;
+    }
+
+    .header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #0f0f0f;
+    }
+
+    .scheduler-form {
+      padding: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #606060;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #ff0000;
+      box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+    }
+
+    .quick-times {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .quick-time-btn {
+      padding: 8px;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      background: #f8f8f8;
+      color: #0f0f0f;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-time-btn:hover {
+      background: #f2f2f2;
+      border-color: #d5d5d5;
+    }
+
+    #scheduleButton {
+      width: 100%;
+      padding: 14px;
+      background: #ff0000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 24px;
+    }
+
+    #scheduleButton:hover {
+      background: #cc0000;
+    }
+
+    .scheduled-section {
+      padding: 0 20px 20px;
+    }
+
+    .scheduled-section h2 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      color: #0f0f0f;
+    }
+
+    #scheduledList {
+      list-style: none;
+    }
+
+    .scheduled-item {
+      background: #f8f8f8;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .scheduled-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .video-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #0f0f0f;
+      word-break: break-word;
+    }
+
+    .schedule-time {
+      font-size: 13px;
+      color: #606060;
+      margin-bottom: 12px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .actions button {
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .actions button.open {
+      background: #065fd4;
+    }
+
+    .actions button.edit {
+      background: #2ba640;
+    }
+
+    .actions button.cancel {
+      background: #ff0000;
+    }
+
+    .actions button.complete {
+      background: #606060;
+    }
+
+    .actions button:hover {
+      filter: brightness(90%);
+    }
+
+    #editForm {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+    }
+
+    .edit-form-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .edit-form-content h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .edit-form-content .actions {
+      margin-top: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* Flatpickr customization */
+    .flatpickr-calendar {
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .flatpickr-day.selected {
+      background: #ff0000 !important;
+      border-color: #ff0000 !important;
+    }
+
+    .flatpickr-day:hover {
+      background: #ffe6e6 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Schedule YouTube Video</h1>
+  </div>
+
+  <div class="scheduler-form">
+    <div class="input-group">
+      <label for="videoUrl">Video URL</label>
+      <input type="text" id="videoUrl" placeholder="Enter or paste YouTube video URL">
+    </div>
+
+    <div class="input-group">
+      <label for="scheduleTime">When to watch?</label>
+      <input type="text" id="scheduleTime" placeholder="Select date and time">
+      <div class="quick-times">
+        <button class="quick-time-btn" data-time="1">In 1 hour</button>
+        <button class="quick-time-btn" data-time="3">In 3 hours</button>
+        <button class="quick-time-btn" data-time="24">Tomorrow</button>
+      </div>
+    </div>
+
+    <button id="scheduleButton">Schedule Video</button>
+  </div>
+
+  <div class="scheduled-section">
+    <h2>Scheduled Videos</h2>
+    <ul id="scheduledList"></ul>
+  </div>
+
+  <div id="editForm">
+    <div class="edit-form-content">
+      <h3>Edit Schedule</h3>
+      <div class="input-group">
+        <label for="editScheduleTime">New Time</label>
+        <input type="text" id="editScheduleTime" placeholder="Select new date and time">
+      </div>
+      <div class="actions">
+        <button id="saveEditButton" style="background: #2ba640">Save Changes</button>
+        <button id="cancelEditButton" style="background: #606060">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="flatpickr.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

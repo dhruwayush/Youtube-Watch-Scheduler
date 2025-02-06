@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Watch Scheduler",
+  "version": "1.0",
+  "description": "Schedule YouTube videos to watch later",
+  "permissions": [
+    "storage",
+    "alarms",
+    "tabs",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "*://youtu.be/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"],
+      "css": []
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.html"],
+      "matches": ["*://*.youtube.com/*"]
+    },
+    {
+      "resources": [
+        "flatpickr.min.js",
+        "flatpickr.min.css",
+        "material_red.css"
+      ],
+      "matches": ["*://*.youtube.com/*"]
+    }
+  ]
+}
